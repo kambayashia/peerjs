@@ -1201,7 +1201,7 @@ Peer.prototype.listRoomMemberPeers = function(cb) {
   var http = new XMLHttpRequest();
   var protocol = this.options.secure ? 'https://' : 'http://';
   var url = protocol + this.options.host + ':' + this.options.port +
-    this.options.path + this.options.key + '/' + this.id + '/room-peers';
+    this.options.path + this.options.key + '/room-peers';
   var queryString = '?ts=' + new Date().getTime() + '' + Math.random();
   url += queryString;
 
@@ -1255,8 +1255,9 @@ util.inherits(Socket, EventEmitter);
 /** Check in with ID or get one from server. */
 Socket.prototype.start = function(id, token, room) {
   this.id = id;
-
-  this._httpUrl += '/' + id + '/' + token + '/' + room;
+  this.room = room;
+  
+  this._httpUrl += '/' + id + '/' + token;
   this._wsUrl += '&id=' + id + '&token=' + token + '&room=' + room;
 
   this._startXhrStream();
@@ -1312,7 +1313,7 @@ Socket.prototype._startXhrStream = function(n) {
     this._http = new XMLHttpRequest();
     this._http._index = 1;
     this._http._streamIndex = n || 0;
-    this._http.open('post', this._httpUrl + '/id?i=' + this._http._streamIndex, true);
+    this._http.open('post', this._httpUrl + '/' + this.room + '/id?i=' + this._http._streamIndex, true);
     this._http.onerror = function() {
       // If we get an error, likely something went wrong.
       // Stop streaming.
