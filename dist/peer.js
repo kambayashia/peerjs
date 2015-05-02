@@ -937,6 +937,11 @@ Peer.prototype._handleMessage = function(message) {
         }
       }
       break;
+
+    case 'PING':
+      this.pong();
+      break;
+    
     default:
       if (!payload) {
         util.warn('You received a malformed message from ' + peer + ' of type ' + type);
@@ -1223,6 +1228,13 @@ Peer.prototype.listRoomMemberPeers = function(cb) {
   };
   http.send(null);
 };
+
+Peer.prototype.pong = function() {
+  this.socket.send({
+    type: "PONG",
+    src: this.id
+  });
+}
 
 module.exports = Peer;
 
