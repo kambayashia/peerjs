@@ -941,6 +941,9 @@ Peer.prototype._handleMessage = function(message) {
     case 'PING':
       this.pong();
       break;
+    case 'CHAT':
+      this.emit('chat', peer, payload);
+      break;
     
     default:
       if (!payload) {
@@ -1233,6 +1236,17 @@ Peer.prototype.pong = function() {
   this.socket.send({
     type: "PONG",
     src: this.id
+  });
+}
+
+Peer.prototype.chat = function(name, message) {
+  this.socket.send({
+    type: "CHAT",
+    src: this.id,
+    payload: {
+      name: name,
+      message: message
+    }
   });
 }
 
